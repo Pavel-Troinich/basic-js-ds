@@ -21,27 +21,41 @@ const { NotImplementedError } = require('../extensions/index.js');
 }
 
 
+
+
 class Queue {
 
   constructor() {
-    this.linkedList = new ListNode();
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
   }
 
   getUnderlyingList() {
-    return this.value;
+    return this.head;
   }
 
-  enqueue(value) {
-    
-    this.linkedList.append(value);
+  enqueue(x) {
+    let itemOfQueue = new ListNode(x);
+    if (this.head) {
+      this.tail.next = itemOfQueue;
+      this.tail = itemOfQueue;
+    } else {
+      this.head = itemOfQueue;
+      this.tail = itemOfQueue;
+    }
+    this.length++;
   }
 
   dequeue() {
-    
-    const removedHead = this.linkedList.deleteHead();
-    return removedHead ? removedHead.value : null;
+    let queueHead = this.head;
+    this.head = this.head.next;
+    this.length--;
+    return queueHead.value;
   }
 }
+
+
 
 module.exports = {
   Queue

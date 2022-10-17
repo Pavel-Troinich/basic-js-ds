@@ -6,98 +6,150 @@ const { NotImplementedError } = require('../extensions/index.js');
 * Implement simple binary search tree according to task description
 * using Node from extensions
 */
-class Node
-
-{
-
-    constructor(data)
-
-    {
-
-        this.data = data;
-
-        this.left = null;
-
-        this.right = null;
-
-    }
-
+class Node { 
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
 } 
 
 class BinarySearchTree {
 
-  constructor()
-
-    {
-        this.root = null;
-    }
+  constructor() {
+    this.rootBst = null;
+  }
 
   root() {
-    return this.root;
+    return this.rootBst;
   }
 
   add(data) {
-    let newNode = new Node(data);
+    this.rootBst = addData(this.rootBst, data);
 
-    if(this.root === null) {
-        this.root = newNode;
-      }  else
-        this.insertNode(this.root, newNode); 
+    function addData(node, data) {
+      if (!node) {
+        return new Node(data);
+      }
+      if (node.data === data) {
+        return node;
+      }
+      if (data < node.data) {
+        node.left = addData(node.left, data);
+      } else {
+        node.right = addData(node.right, data);
+      }
+      return node;
+    }
   }
 
-  insertNode(node, newNode) {
+  
 
-    if(newNode.data < node.data) {
 
-        if(node.left === null) {
-            node.left = newNode;
-        } else
-            this.insertNode(node.left, newNode); 
+
+  has(data) {
+    return searchNode(this.rootBst, data);
+
+    function searchNode(node, data) {
+      if (!node) {
+        return false;
+      }
+
+      if (node.data === data) {
+        return true;
+      }
+
+      return data < node.data ? searchNode(node.left, data) : searchNode(node.right, data);
     }
-    else
-    {
-        if(node.right === null) {
-            node.right = newNode;
-        } else
-            this.insertNode(node.right,newNode);
-    }
-
-} 
-
-  has(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
   }
 
-  find(node, data) {
-    if(node === null) {
+  find(data) {
+    return findNode(this.rootBst, data);
+
+   function findNode(node, data){
+    if (!node) {
+      return null;
+    }
+
+    if (node.data === data) {
+      return node;
+    }
+
+    if (node.data > data) {
+      return findNode(node.left, data);
+    }
+
+    if (node.data < data) {
+      return findNode(node.right, data);
+    }
+   }
+  }
+
+  remove(data) {
+    this.rootBst = removeNode(this.rootBst, data);
+
+    function removeNode(node, data) {
+      if (!node) {
         return null;
-    } else if(data < node.data) {
-        return this.search(node.left, data);
-    } else if(data > node.data) {
-      return this.search(node.right, data);
-    } else
-        return node; 
-  }
+      }
 
-  remove(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
-  }
-
-  min(node) {
-    if(node.left === null)
+      if (data < node.data) {
+        node.left = removeNode(node.left, data);
         return node;
-    else
-        return this.min(node.left); 
+      } else if (data > node.data) {
+        node.right = removeNode(node.right, data);
+        return node;
+      } else {        
+        if (!node.left && !node.right) {          
+          return null;
+        }
+        if (!node.left) {
+          node = node.right;
+          return node;
+        }
+        if (!node.right) {
+          node = node.left;
+          return node;
+        }
+        
+        let minElement = node.right;
+        while (minElement.left) {
+          minElement = minElement.left;
+        }
+
+        node.data = minElement.data;
+        node.right = removeNode(node.right, minElement.data);
+
+        return node;
+        
+      }
+    }
   }
 
-  max(node) {
-    if(node.right === null)
-        return node;
-    else
-        return this.max(node.right); 
+  min() {
+    if (!this.rootBst) {
+      return null;
+    } else {
+      let node = this.rootBst;
+      while (node.left) {
+        node = node.left;
+      } 
+      return node.data;
+    }
   }
+
+  max() {
+    if (!this.rootBst) {
+      return null;
+    } else {
+      let node = this.rootBst;
+      while (node.right) {
+        node = node.right;
+      } 
+      return node.data;
+    }
+  }
+       
 }
 
 module.exports = {
